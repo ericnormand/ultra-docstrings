@@ -1,8 +1,20 @@
-(ns ultra-docstrings.core)
+# Formatting docstrings
 
-(def docstrings
-  '{clojure.core
-    {map "
+We follow a standardized format for our docstrings to help us quickly
+find the information we need after a few uses. Perhaps an example
+would be the best way to explain it.
+
+Notes are below.
+
+Let's say you wanted to learn how to use `map`. At the REPL, you run
+`doc`, which is built into Clojure.
+
+```
+user=> (doc map)
+-------------------------
+clojure.core/map
+([f] [f coll] [f c1 c2] [f c1 c2 c3] [f c1 c2 c3 & colls])
+  
 
 Use clojure.core/map to transform a collection of something into a
 sequence of something else.
@@ -14,7 +26,7 @@ This expression should increment all of the numbers in the collection.
 
 * The first argument should be a function of one argument.
 * The second argument is a collection or iterable.
-* map always returns a sequence, regardless of the type of the argument.
+* map always returns a sequence, regardless the type of the argument.
 * The sequence it returns is lazy.
 
 
@@ -49,24 +61,6 @@ See also
 * (doc clojure.core/reduce) -- combine items into a single value
 * (doc clojure.core/filter) -- keep some items from a collection
 * (doc clojure.core/mapv)   -- like map, but returns a vector and is not lazy
-"}
-    ring.jetty
-    {start-server "This is how you start a server."}})
 
-(defn replace-docstrings []
-  (doseq [[ns vars] docstrings]
-    (when (try
-            (require ns)
-            :success
-            (catch Exception e
-              nil))
-      (doseq [[var docstring] vars]
-        (when-let [v (ns-resolve *ns* var)]
-          (alter-meta! v (fn [meta]
-                           (cond-> meta
-                             (not (contains? meta :friendly/old-doc))
-                             (assoc :friendly/old-doc (:doc meta))
 
-                             true
-                             (assoc :doc docstring)))))))))
-
+```
