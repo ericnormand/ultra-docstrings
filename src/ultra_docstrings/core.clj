@@ -70,3 +70,18 @@ See also
                              true
                              (assoc :doc docstring)))))))))
 
+(defn revert-docstrings []
+  (doseq [[ns vars] docstrings]
+    (when (try
+            (require ns)
+            :success
+            (catch Exception e
+              nil))
+      (doseq [[var docstring] vars]
+        (when-let [v (ns-resolve *ns* var)]
+          (alter-meta! v (fn [meta]
+                           (if (contains? meta :friendly/old-doc)
+                             (-> meta
+                                 (assoc :doc (:friendly/old-doc meta))
+                                 (dissoc :friendly/old-doc))
+                             meta))))))))
